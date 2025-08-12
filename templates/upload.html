@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>ছবি আপলোড করুন</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    #preview {
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      max-height: 300px;
+      object-fit: contain;
+    }
+    .upload-option {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .upload-option:hover {
+      transform: translateY(-2px);
+    }
+    .loading-bar {
+      height: 3px;
+      background: linear-gradient(to right, #3b82f6, #10b981);
+      animation: loading 1.5s infinite;
+      width: 0%;
+    }
+    @keyframes loading {
+      0% { width: 0%; opacity: 0.7; }
+      50% { width: 70%; opacity: 1; }
+      100% { width: 100%; opacity: 0; }
+    }
+    input[type="file"] {
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen items-center justify-center px-5 py-8">
+
+  <div class="max-w-md w-full space-y-6">
+    <!-- Header -->
+    <div class="text-center animate-fadeIn">
+      <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-sky-500 bg-clip-text text-transparent">
+        ছবি আপলোড করুন
+      </h1>
+      <p class="text-blue-500 font-medium mt-2 text-sm md:text-base leading-tight">
+        স্পষ্ট বাংলা লেখার ছবি আপলোড করুন
+      </p>
+    </div>
+
+    <!-- Upload Form -->
+    <form id="uploadForm" class="bg-white rounded-2xl shadow-md p-6 space-y-4 animate-fadeIn delay-100" action="/upload" method="POST" enctype="multipart/form-data">
+      <div class="grid grid-cols-2 gap-3">
+        <label class="upload-option cursor-pointer transition-all">
+          <div class="p-4 border-2 border-dashed border-blue-200 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors flex flex-col items-center h-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="text-sm font-medium text-center">ক্যামেরা দিয়ে তুলুন</span>
+            <input type="file" id="cameraInput" name="photo" accept="image/*" capture="environment" class="hidden">
+          </div>
+        </label>
+
+        <label class="upload-option cursor-pointer transition-all">
+          <div class="p-4 border-2 border-dashed border-blue-200 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors flex flex-col items-center h-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="text-sm font-medium text-center">গ্যালারি থেকে নির্বাচন করুন</span>
+            <input type="file" id="galleryInput" name="photo" accept="image/jpeg,image/png" class="hidden">
+          </div>
+        </label>
+      </div>
+
+      <!-- Preview Section -->
+      <div id="previewContainer" class="hidden mt-4 space-y-3">
+        <div class="flex justify-between items-center">
+          <h3 class="font-medium text-gray-700">আপনার নির্বাচিত ছবি:</h3>
+          <button type="button" id="clearPreview" class="text-red-500 text-sm flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            অপসারণ করুন
+          </button>
+        </div>
+        <img id="preview" class="w-full rounded-lg border-2 border-dashed border-gray-200" alt="Preview">
+        <p id="fileInfo" class="text-xs text-gray-500 text-center"></p>
+      </div>
+
+      <!-- Loading Bar -->
+      <div id="loadingBar" class="loading-bar hidden"></div>
+
+      <!-- Validation Messages -->
+      <div id="validationMsg" class="text-center">
+        <p id="errorMsg" class="text-red-500 text-sm py-2 hidden"></p>
+        <p id="successMsg" class="text-green-500 text-sm py-2 hidden"></p>
+      </div>
+
+      <!-- Upload Button -->
+      <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:bg-blue-400 disabled:cursor-not-allowed" disabled>
+        <span id="btnText">আপলোড করুন</span>
+        <svg id="submitIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+        <svg id="loadingSpinner" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin hidden" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const crypto = window.crypto || window.msCrypto;
+      const uploadedHashes = new Set();
+      let isSubmitting = false;
+
+      const cameraInput = document.getElementById('cameraInput');
+      const galleryInput = document.getElementById('galleryInput');
+      const preview = document.getElementById('preview');
+      const previewContainer = document.getElementById('previewContainer');
+      const clearPreview = document.getElementById('clearPreview');
+      const fileInfo = document.getElementById('fileInfo');
+      const errorMsg = document.getElementById('errorMsg');
+      const successMsg = document.getElementById('successMsg');
+      const loadingBar = document.getElementById('loadingBar');
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
+      const submitIcon = document.getElementById('submitIcon');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const form = document.getElementById('uploadForm');
+
+      // Supported file types
+      const validTypes = {
+        'image/jpeg': true,
+        'image/png': true,
+        'image/jpg': true,
+        'application/octet-stream': true
+      };
+      const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+      // Calculate file hash
+      async function calculateFileHash(file) {
+        const buffer = await file.arrayBuffer();
+        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+        return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      // Validate file
+      async function validateFile(file) {
+        if (!file) {
+          showError('ফাইল নির্বাচন করুন');
+          return false;
+        }
+        
+        if (file.size > maxFileSize) {
+          showError('ফাইলের সাইজ 5MB এর কম হতে হবে');
+          return false;
+        }
+        
+        if (!validTypes[file.type] && !file.name.match(/\.(jpe?g|png)$/i)) {
+          showError('শুধুমাত্র JPG/PNG ফাইল অনুমোদিত');
+          return false;
+        }
+        
+        const fileHash = await calculateFileHash(file);
+        if (uploadedHashes.has(fileHash)) {
+          showError('এই ফাইলটি ইতিমধ্যে আপলোড করা হয়েছে');
+          return false;
+        }
+        uploadedHashes.add(fileHash);
+        
+        return true;
+      }
+
+      // Handle file selection
+      async function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        if (!await validateFile(file)) {
+          resetFileInputs();
+          return;
+        }
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.src = e.target.result;
+          previewContainer.classList.remove('hidden');
+          submitBtn.disabled = false;
+          
+          // Show file info
+          fileInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+          showSuccess('ছবিটি সঠিকভাবে নির্বাচন হয়েছে। এখন আপলোড বাটনে ক্লিক করুন।');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      // Clear preview
+      clearPreview.addEventListener('click', function() {
+        resetFileInputs();
+        previewContainer.classList.add('hidden');
+        submitBtn.disabled = true;
+        hideMessages();
+      });
+
+      // Reset file inputs
+      function resetFileInputs() {
+        cameraInput.value = '';
+        galleryInput.value = '';
+        preview.src = '';
+        fileInfo.textContent = '';
+      }
+
+      // Show error message
+      function showError(message) {
+        errorMsg.textContent = message;
+        errorMsg.classList.remove('hidden');
+        successMsg.classList.add('hidden');
+      }
+
+      // Show success message
+      function showSuccess(message) {
+        successMsg.textContent = message;
+        successMsg.classList.remove('hidden');
+        errorMsg.classList.add('hidden');
+      }
+
+      // Hide all messages
+      function hideMessages() {
+        errorMsg.classList.add('hidden');
+        successMsg.classList.add('hidden');
+      }
+
+      // Format file size
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // Form submission
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (isSubmitting) return;
+        isSubmitting = true;
+        
+        const file = cameraInput.files[0] || galleryInput.files[0];
+        if (!await validateFile(file)) {
+          isSubmitting = false;
+          return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.textContent = 'আপলোড হচ্ছে...';
+        submitIcon.classList.add('hidden');
+        loadingSpinner.classList.remove('hidden');
+        loadingBar.classList.remove('hidden');
+
+        try {
+          // Simulate upload (replace with actual API call)
+          await new Promise(resolve => setTimeout(resolve, 1500));
+          window.location.href = "thankyou.html";
+        } catch (error) {
+          showError('আপলোড ব্যর্থ হয়েছে: ' + error.message);
+        } finally {
+          isSubmitting = false;
+          loadingBar.classList.add('hidden');
+        }
+      });
+
+      // Event listeners
+      cameraInput.addEventListener('change', handleFileSelect);
+      galleryInput.addEventListener('change', handleFileSelect);
+    });
+  </script>
+
+</body>
+</html>
